@@ -8,7 +8,8 @@ from datetime import datetime, timedelta
 from plotly.graph_objs._figure import Figure
 
 from typing import List, Dict
-
+import warnings
+warnings.filterwarnings("ignore")
 
 def get_year(date: str | datetime) -> int:
     """Extract the year from a date string or datetime object."""
