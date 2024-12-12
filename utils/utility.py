@@ -85,7 +85,7 @@ def create_plot(
     x_label: str,
     y_label: str,
     ntop: int = 10,
-    pallette: str = "viridis",
+    orientation: str = "v",
     type_plot: str = "bar",
 ) -> Figure | None:
     """Create a plotly plot."""
@@ -103,6 +103,7 @@ def create_plot(
             color=x_col,
             text=target_col,
             title=title,
+            orientation=orientation,
             labels={x_col: x_label, target_col: y_label},
             color_discrete_sequence=px.colors.qualitative.Vivid,
             text_auto=True,
@@ -110,7 +111,7 @@ def create_plot(
 
         fig.update_layout(
             xaxis=dict(type="category"),
-            yaxis=dict(title=y_label),
+            yaxis=dict(title=y_label, tickformat=","),
             legend_title_text=x_label,
         )
         return fig

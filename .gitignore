@@ -175,6 +175,11 @@ pyrightconfig.json
 
 # Custom
 save_script.py
+*.ipynb
+big_data_network_analysis.py
+big_data_uas_kel2.py
+honeypot_log_2023_04_27.py
+kelompok2.py
 
 # End of https://www.toptal.com/developers/gitignore/api/python
 

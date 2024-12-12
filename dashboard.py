@@ -1,3 +1,4 @@
+from ipaddress import ip_address
 import streamlit as st
 from utils import utility
 import pandas as pd
@@ -16,6 +17,7 @@ LIST_FILE = [
     "data/dionaea_ews_log.csv",
     "data/dionaea_log_compress.csv",
     "data/honeypot_log_2023_04_27.csv",
+    "data/rdpy_log.csv",
 ]
 
 dict_interval = {
@@ -407,3 +409,117 @@ elif file_path == "dionaea_ews_log.csv":
     df_anomaly = df_ip[df_ip["count"] > df_ip["count"].mean() + 2 * df_ip["count"].std()]
     df_anomaly.reset_index(inplace=True, drop=True)
     st.table(df_anomaly)
+
+elif file_path == "rdpy_log.csv":
+    fig = utility.create_plot(
+        df=df,
+        columns="ip_address",
+        agg={"ip_address": "count"},
+        x_col="ip_address",
+        rename_col="ip_address",
+        target_col="count",
+        sort_column="count",
+        title="Frequency of IP Address",
+        x_label="IP Address",
+        y_label="Frequency",
+    )
+    st.plotly_chart(fig)
+    
+    df["source_port"] = df["source_port"].apply(lambda x: str(x))
+
+    fig = utility.create_plot(
+        df=df,
+        columns="source_port",
+        agg={"source_port": "count"},
+        x_col="source_port",
+        rename_col="source_port",
+        target_col="count",
+        sort_column="count",
+        title="Frequency of Source Port",
+        x_label="Source Port",
+        y_label="Frequency",
+    )
+    st.plotly_chart(fig)
+
+    interval_all = st.selectbox(
+        "Select interval",
+        [
+            "5 minutes",
+            "15 minutes",
+            "30 minutes",
+            "1 hour",
+            "3 hours",
+            "6 hours",
+            "12 hours",
+            "1 Day",
+            "1 Week",
+        ],
+        index=0,
+        key="all",
+    )
+
+    attempt_by_time_all = df.groupby(by="timestamp").agg({
+        "ip_address": "count"
+    }).rename(columns={"ip_address": "count"}).reset_index()
+
+    attempt_by_time_all["timestamp"] = pd.to_datetime(attempt_by_time_all["timestamp"])
+    attempt_by_time_all = (
+        attempt_by_time_all.set_index("timestamp")
+        .resample(dict_interval[interval_all])
+        .sum()
+        .reset_index()
+    )
+
+    fig = px.line(
+        attempt_by_time_all,
+        x="timestamp",
+        y="count",
+        title=f"Login Attempts Over Time ({interval_all} interval)",
+        labels={"value": "Count", "timestamp": "Time"},
+        color_discrete_sequence=px.colors.qualitative.Vivid,
+        markers=True,
+    )
+    st.plotly_chart(fig)
+
+    interval = st.selectbox(
+        "Select interval",
+        [
+            "5 minutes",
+            "15 minutes",
+            "30 minutes",
+            "1 hour",
+            "3 hours",
+            "6 hours",
+            "12 hours",
+        ],
+        index=0,
+        key="ip",
+    )
+
+    filter_df = df.groupby(by="ip_address").agg({
+        "ip_address": "count"
+    }).rename(columns={"ip_address": "count"}).reset_index().sort_values(by="count", ascending=False)
+
+    select_ip = st.selectbox("Select IP Address", filter_df["ip_address"].head(10).values)
+
+    attempt_by_time = df[df["ip_address"] == select_ip].groupby(by="timestamp").agg({
+        "ip_address": "count"
+    }).rename(columns={"ip_address": "count"}).reset_index()
+    attempt_by_time["timestamp"] = pd.to_datetime(attempt_by_time["timestamp"])
+    attempt_by_time = (
+        attempt_by_time.set_index("timestamp")
+        .resample(dict_interval[interval])
+        .sum()
+        .reset_index()
+    )
+
+    fig = px.line(
+        attempt_by_time,
+        x="timestamp",
+        y="count",
+        title=f"Login Attempts Over Time ({interval} interval)",
+        labels={"value": "Count", "timestamp": "Time"},
+        color_discrete_sequence=px.colors.qualitative.Vivid,
+        markers=True,
+    )
+    st.plotly_chart(fig)
