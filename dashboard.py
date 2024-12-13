@@ -281,7 +281,6 @@ elif file_path == "dionaea_log_compress.csv":
         title="Rate of Login Attempts by protocol",
         x_label="Protocol",
         y_label="Jumlah",
-        type_plot="pie",
     )
     st.plotly_chart(fig)
 
