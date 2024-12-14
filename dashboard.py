@@ -34,6 +34,15 @@ dict_interval = {
 
 st.title("Network Analysis Dashboard :globe_with_meridians:")
 
+st.write("Dashboard ini dibuat oleh kelompok 2")
+st.markdown("""
+**Anggota kelompok:**
+1. Rahman Ilyas Al-Kahfi (2210511044)
+2. Adinda Rizki Sya'bana Diva (2210511056)
+3. Ika Kusuma Wardani (2210511058)
+4. Dzulfikri Adjmal (2210511084)
+""")
+
 st.sidebar.title("Select data file")
 file_path = st.sidebar.selectbox(
     "Select data file", [f.split("/")[-1] for f in LIST_FILE]

@@ -116,7 +116,7 @@ def create_plot(
         )
         return fig
     elif type_plot == "line":
-        return px.line(
+        fig = px.line(
             df_filtered,
             x=x_col,
             y=target_col,
@@ -124,6 +124,10 @@ def create_plot(
             labels={x_col: x_label, target_col: y_label},
             color_discrete_sequence=px.colors.qualitative.Vivid,
             markers=True,
+        )
+
+        fig.update_layout(
+            yaxis=dict(title=y_label, tickformat=","),
         )
 
     elif type_plot == "pie":
