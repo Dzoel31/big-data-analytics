@@ -56,10 +56,10 @@ DATE_END = df["timestamp"].max()
 st.sidebar.title("Select time period")
 
 start_date = st.sidebar.date_input(
-    "Start date", datetime.strptime(DATE_START, "%Y-%m-%d %H:%M:%S")
+    "Start date", datetime.strptime(DATE_START, "%Y-%m-%d %H:%M:%S"), min_value=datetime.strptime(DATE_START, "%Y-%m-%d %H:%M:%S"), max_value=datetime.strptime(DATE_END, "%Y-%m-%d %H:%M:%S")
 )
 end_date = st.sidebar.date_input(
-    "End date", datetime.strptime(DATE_END, "%Y-%m-%d %H:%M:%S")
+    "End date", datetime.strptime(DATE_END, "%Y-%m-%d %H:%M:%S"), min_value=datetime.strptime(DATE_START, "%Y-%m-%d %H:%M:%S"), max_value=datetime.strptime(DATE_END, "%Y-%m-%d %H:%M:%S")
 )
 
 df = utility.filter_data_by_date(df, "timestamp", start_date, end_date)
